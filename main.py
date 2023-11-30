@@ -181,7 +181,7 @@ def my_assistant():
                 speak(f'I found it! The price of {share} is {price}')
                 continue
             except:
-                speak('I am sorry, but I didn´t find it')
+                speak('I am sorry, but I did not find it')
                 continue
         elif 'goodbye' in my_request:
             speak('I am going to rest. Let me know if you need anything')
