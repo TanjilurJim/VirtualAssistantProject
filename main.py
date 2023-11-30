@@ -11,55 +11,44 @@ import wikipedia
 id1 ='HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_DAVID_11.0'
 id2 = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0'
 
+engine = pyttsx3.init()
 
-#hear the microphone and return the audio as text
-def transform_audio_into_text():
-    # store recognizer in variable
+def speak(message):
+    engine.setProperty('voice', id2)
+    engine.say(message)
+    engine.runAndWait()
+
+# Function to choose language
+def choose_language():
+    speak("Please choose a language. Say 'English' or 'Bengali'.")
+    language = ''
+    while language.lower() not in ['english', 'bengali']:
+        language = transform_audio_into_text()
+        if language.lower() not in ['english', 'bengali']:
+            speak("Sorry, I didn't understand. Please say 'English' or 'Bengali'.")
+    return language.lower()
+
+#  Transform Audio into Text with Language Option
+def transform_audio_into_text(lang='en-US'):
     r = sr.Recognizer()
-
-    #set microphone
     with sr.Microphone() as source:
-
-        # waiting time
         r.pause_threshold = 0.8
-        # report that recording has begun
-        print("you can now speak: ")
-        #save what u hear as audio
+        speak("You can now speak.")
         audio = r.listen(source)
 
         try:
-            #search on google
-            request = r.recognize_google(audio, language="en-us")
-
-            #test in text
-            print("You said " + request)
-
-            #return request
+            request = r.recognize_google(audio, language=lang)
+            print("You said: " + request)
             return request
-        #in case it doesn't understand
         except sr.UnknownValueError:
-            #show proof that it didn't understand the audio
-            print("Oops! I didn't understand audio")
-
-            #return error
+            speak("Oops! I didn't understand audio")
             return "I am still listening"
-
-        #in Case the request cannot be resolved
         except sr.RequestError:
-            # show proof that it didn't understand the audio
-            print("Oops! I didn't understand audio")
-
-            # return error
+            speak("Oops! There was a request error")
             return "I am still listening"
-
-        #Unexpected error
         except:
-            # show proof that it didn't understand the audio
-            print("Oops! something went wrong")
-
-            # return error
+            speak("Oops! something went wrong")
             return "I am still listening"
-# transform_audio_into_text()
 
 #function so the assistant can be heard
 def speak(message):
@@ -79,7 +68,7 @@ def speak(message):
 
 # speak("Hello World")
 
-engine = pyttsx3.init()
+
 
 # for voice in engine.getProperty('voices'):
 #     print(voice)
@@ -120,6 +109,26 @@ def ask_time():
 
 
 def my_assistant():
+    language = choose_language()  # Choose language at the start
+    lang_code = 'bn-IN' if language == 'bengali' else 'en-US'
+
+    initial_greeting = "হ্যালো, আমি হেজেল। আপনার কিভাবে সাহায্য করতে পারি?" if language == 'bengali' else "Hello, I am Hazel. How can I help you?"
+    speak(initial_greeting)
+
+    go_on = True
+    while go_on:
+        my_request = transform_audio_into_text(lang_code).lower()
+
+        # Existing command logic here...
+        # Remember to add support for commands in Bengali as well
+
+        if 'goodbye' in my_request:
+            speak('I am going to rest. Let me know if you need anything')
+            break
+        else:
+            # Respond to unrecognized commands
+            unrecognized_msg = "দুঃখিত, আমি বুঝতে পারিনি" if language == 'bengali' else "I'm sorry, I didn't understand that."
+            speak(unrecognized_msg)
 
     # Activate the initial greeting
     initial_greeting()
