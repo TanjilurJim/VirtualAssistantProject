@@ -72,6 +72,11 @@ def speak(message):
     engine.say(message)
     engine.runAndWait()
 
+    # Provide feedback to the user
+    print(f"Assistant: {message}")
+
+
+
 # speak("Hello World")
 
 engine = pyttsx3.init()
@@ -131,10 +136,12 @@ def my_assistant():
         if 'open youtube' in my_request:
             speak('Sure, I am opening youtube')
             webbrowser.open('https://www.youtube.com')
+            print("Opening YouTube...")
             continue
         elif 'open browser' in my_request:
             speak ('Of course, I am on it')
             webbrowser.open('https://www.google.com')
+            print("Opening the browser...")
             continue
         elif 'what day is today' in my_request:
             ask_day()
