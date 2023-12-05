@@ -61,6 +61,25 @@ def transform_audio_into_text():
             return "I am still listening"
 # transform_audio_into_text()
 
+# Global variable to keep track of the conversation context
+# expecting_yes_no = False
+
+# def respond_to_okay():
+#     global expecting_yes_no
+#     response_message = "Everything is set. Do you need anything else?"
+#     speak(response_message)
+#     print(f"Assistant: {response_message}")
+#     expecting_yes_no = True  # Now expecting a yes/no response
+#
+# def handle_yes_no_response(response):
+#     global expecting_yes_no
+#     if response == "yes":
+#         speak("How can I assist you further?")
+#     elif response == "no":
+#         speak("Okay, let me know if you need anything later.")
+#     expecting_yes_no = False  # Reset the flag after handling
+
+
 #function so the assistant can be heard
 def speak(message):
 
@@ -86,25 +105,15 @@ engine = pyttsx3.init()
 
 #Inform day of the week
 def ask_day():
-    #create a variable with today's information
-    day = datetime.date.today()
-    print(day)
+    # Fetch the current date
+    today = datetime.date.today()
+    # Get the name of the day
+    week_day = today.strftime("%A")
+    # Format the date
+    date_string = today.strftime("%B %d, %Y")  # Example: December 05, 2023
+    # Announce the day and date
+    speak(f"Today is {week_day}, {date_string}")
 
-    #create day of the week
-
-    week_day = day.weekday()
-    print(week_day)
-
-    #Names of days
-    calendar = {0:"Monday",
-                1:"Tuesday",
-                2:"wednesday",
-                3:"thursday",
-                4:"friday",
-                5:"Saturday",
-                6:"Sunday"}
-    #say the day
-    speak(f'Today is, {calendar[week_day]}')
 
 # ask_day()
 
@@ -116,11 +125,25 @@ def initial_greeting():
 
 # Main function of the assistant
 def ask_time():
-    pass
+    # Fetch the current time
+    now = datetime.datetime.now()
+    # Format the time as hour and minutes
+    time_string = now.strftime("%H:%M")
+    # Announce the time
+    speak(f"The time is {time_string}")
+def ask_date_and_time():
+    # Fetch the current date and time
+    now = datetime.datetime.now()
+    # Get the name of the day and the formatted date and time
+    week_day = now.strftime("%A")
+    date_string = now.strftime("%B %d, %Y")
+    time_string = now.strftime("%H:%M")
+    # Announce the day, date, and time
+    speak(f"Today is {week_day}, {date_string}. The time is {time_string}")
 
 
 def my_assistant():
-
+    global expecting_yes_no
     # Activate the initial greeting
     initial_greeting()
 
@@ -132,6 +155,9 @@ def my_assistant():
 
         # Activate microphone and save request
         my_request = transform_audio_into_text().lower()
+        # if expecting_yes_no:
+        #     handle_yes_no_response(my_request)
+        #     continue
 
         if 'open youtube' in my_request:
             speak('Sure, I am opening youtube')
@@ -146,6 +172,12 @@ def my_assistant():
         elif 'what day is today' in my_request:
             ask_day()
             continue
+        elif 'what is the date and time' in my_request or 'what is the time and date' in my_request:
+            ask_date_and_time()
+            continue
+        # elif 'okay' in my_request:
+        #     respond_to_okay()
+        #     continue
         elif 'what time it is' in my_request:
             ask_time()
             continue
