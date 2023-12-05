@@ -1,0 +1,15 @@
+Date: 6/12/2023
+Time: 0:13
+Phone Number: +1234567890
+Message: Hello from my chatbot!
+--------------------
+Date: 6/12/2023
+Time: 0:15
+Phone Number: +1234567890
+Message: Hello from my chatbot!
+--------------------
+Date: 6/12/2023
+Time: 0:23
+Phone Number: +1234567890
+Message: Hello from my chatbot!
+--------------------

@@ -99,6 +99,18 @@ def speak(message):
     print(f"Assistant: {message}")
 
 
+# Define a dictionary to store contact information (name to phone number mapping)
+contact_info = {
+    'Gym': '01791557014',
+    'Alice': '+9876543210',
+    # Add more contacts as needed
+}
+
+# Function to lookup a phone number based on a contact's name
+def lookup_phone_number(contact_name):
+    return contact_info.get(contact_name, None)
+
+
 
 # speak("Hello World")
 
@@ -145,6 +157,39 @@ def ask_date_and_time():
     # Announce the day, date, and time
     speak(f"Today is {week_day}, {date_string}. The time is {time_string}")
 
+# Function for web scraping
+def scrape_website(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        # Extract information from the website using BeautifulSoup
+        # You can print or return the data here
+        return "Web scraping successful."
+    else:
+        return "Failed to fetch the website."
+
+# Function for sending email
+def send_email(subject, message, to_email):
+    smtp_server = 'smtp.example.com'  # Replace with your SMTP server
+    smtp_port = 587
+    sender_email = 'your_email@example.com'  # Replace with your email
+    sender_password = 'your_password'  # Replace with your email password
+
+    server = smtplib.SMTP(smtp_server, smtp_port)
+    server.starttls()
+
+    server.login(sender_email, sender_password)
+
+    email_message = f'Subject: {subject}\n\n{message}'
+    server.sendmail(sender_email, to_email, email_message)
+
+    server.quit()
+
+def send_whatsapp_message(phone_number, message):
+    # Use pywhatkit to send a WhatsApp message
+    pywhatkit.sendwhatmsg(phone_number, message, datetime.datetime.now().hour,
+                          datetime.datetime.now().minute + 2)  # Send the message after 2 minutes
+    speak('WhatsApp is opening, and the message will be sent shortly.')
 
 def my_assistant():
     global expecting_yes_no
@@ -219,6 +264,52 @@ def my_assistant():
             except:
                 speak('I am sorry, but I did not find it')
                 continue
+        elif 'send email' in my_request:
+            # Replace the placeholders with actual subject, message, and recipient
+            send_email('Subject', 'Message body', 'recipient@example.com')
+            speak('The email has been sent.')
+            continue
+        elif 'web scraping' in my_request:
+            # Replace the URL with the website you want to scrape
+            scraped_data = scrape_website('https://www.example.com')
+            speak(scraped_data)  # Speak the result to the user
+            continue
+        # Inside the my_assistant function, find the 'send whatsapp message' block and modify it:
+
+        # Inside the my_assistant function, find the 'send whatsapp message' block and modify it as follows:
+
+        elif 'send whatsapp message' in my_request:
+            speak("Sure, who would you like to send the message to? Please say their name or phone number.")
+            # Listen for and recognize the recipient's name or number
+            recipient_info = transform_audio_into_text().lower()  # Convert the input to lowercase for case-insensitive matching
+            recipient_phone_number = None  # Initialize recipient_phone_number to None
+
+            if 'name' in recipient_info:
+                speak("Please say the name or contact of the recipient.")
+                recipient_name = transform_audio_into_text().lower()  # Convert the recipient's name to lowercase
+                # Use the recipient's name to look up their phone number (you need to implement this part)
+                recipient_phone_number = lookup_phone_number(recipient_name)
+            elif 'number' in recipient_info:
+                speak("Please say the phone number of the recipient.")
+                recipient_phone_number = transform_audio_into_text()  # Listen for and recognize the recipient's phone number
+
+            if recipient_phone_number:
+                speak("What message would you like to send?")
+                message = transform_audio_into_text()  # Listen for and recognize the message
+
+                # Check if both recipient_phone_number and message are recognized
+                if message:
+                    send_whatsapp_message(recipient_phone_number, message)
+                    continue
+                else:
+                    speak("Sorry, I couldn't understand the message. Please try again.")
+            else:
+                speak("Sorry, I couldn't understand the recipient's information. Please try again.")
+                continue
+
+        elif 'goodbye' in my_request:
+            speak('I am going to rest. Let me know if you need anything')
+            break
         elif 'goodbye' in my_request:
             speak('I am going to rest. Let me know if you need anything')
             break
